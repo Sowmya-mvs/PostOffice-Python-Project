@@ -1,0 +1,42 @@
+name: Python 3.12 Compatibility Audit
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install tools (none required)
+        run: |
+          python --version
+
+      - name: Compile all Python files
+        run: |
+          python -m compileall -q .
+
+      - name: Run 3.12 compatibility audit
+        run: |
+          python tools/py312_audit.py --root . --json py312_audit_report.json --format text
+
+      - name: Upload audit report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: py312-audit-${{ matrix.python-version }}
+          path: py312_audit_report.json
+          if-no-files-found: warn

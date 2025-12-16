@@ -1,0 +1,43 @@
+name: Python Upgrade Impact Assessment
+
+on:
+  push:
+    branches: [ "dev", "main" ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  impact-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run deprecated module and syntax scan
+        run: |
+          echo "# Python Upgrade Impact Report" > impact-report.md
+          echo "" >> impact-report.md
+          echo "## Deprecated Modules" >> impact-report.md
+
+          grep -R "import imp" . && echo "- imp → Use importlib" >> impact-report.md || true
+          grep -R "import asyncore" . && echo "- asyncore → Use asyncio" >> impact-report.md || true
+          grep -R "MutableMapping" . && echo "- collections.MutableMapping → collections.abc.MutableMapping" >> impact-report.md || true
+
+          echo "" >> impact-report.md
+          echo "## Incompatible Python Syntax" >> impact-report.md
+          grep -R "print \"" . && echo "- Python 2 print statement → Use print()" >> impact-report.md || true
+
+      - name: Display report
+        run: cat impact-report.md
+
+      - name: Upload impact report
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-upgrade-impact-report
+          path: impact-report.md
