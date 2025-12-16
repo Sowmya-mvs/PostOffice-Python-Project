@@ -1,4 +1,4 @@
-from collections import MutableMapping  # Deprecated import
+from collections.abc import MutableMapping  # Python 3.12-compatible
 
 class MailBox(MutableMapping):
     def __init__(self):

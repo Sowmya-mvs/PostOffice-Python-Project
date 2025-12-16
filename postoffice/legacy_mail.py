@@ -1,8 +1,13 @@
-import imp  # Deprecated since Python 3.4, removed in 3.12+
+import importlib.util
 
 def load_mail_module(path):
-    return imp.load_source('mail_module', path)
+    """Load a Python module from the given file path using importlib (3.12+ safe)."""
+    spec = importlib.util.spec_from_file_location('mail_module', path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader, "Invalid module spec"
+    spec.loader.exec_module(module)
+    return module
 
 def send_mail(address, message):
-    print "Sending mail to %s" % address   # Python 2 syntax
-    print message
+    print(f"Sending mail to {address}")
+    print(message)
