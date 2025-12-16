@@ -1,4 +1,8 @@
-import asyncore  # Deprecated in Python 3.10+
+import asyncio
 
-def start_server():
-    asyncore.loop()
+async def start_server():
+    """Placeholder asyncio server entrypoint (3.12+ safe).
+
+    Replace with actual server creation using asyncio streams or servers.
+    """
+    await asyncio.sleep(0)
