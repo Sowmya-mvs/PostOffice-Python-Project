@@ -1,0 +1,2 @@
+# Legacy / deprecated modules intentionally used for demo
+# This file is scanned by Copilot for upgrade impact
